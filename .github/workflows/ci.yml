@@ -9,52 +9,52 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Клонування репозиторію
+      - name: Cloning Repository
         uses: actions/checkout@v3
 
-      - name: Встановлення .NET
+      - name: .NET Installation
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      - name: Встановлення залежностей
+      - name: Dependency Installation
         run: dotnet restore
 
-      - name: Збірка проекту
+      - name: Project Build
         run: dotnet build --configuration Release --no-restore
 
   test:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Клонування репозиторію
+      - name: Cloning repository
         uses: actions/checkout@v3
 
-      - name: Встановлення .NET
+      - name: .NET Installation
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      - name: Встановлення залежностей
+      - name: Dependency Installation
         run: dotnet restore
 
-      - name: Запуск тестів
+      - name: Test Execution
         run: dotnet test --no-build --verbosity normal
 
   deploy:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Клонування репозиторію
+      - name: Cloning repository
         uses: actions/checkout@v3
 
-      - name: Встановлення .NET
+      - name: .NET Installation
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
 
-      - name: Публікація проекту
+      - name: Project Publishing
         run: dotnet publish --configuration Release --no-restore --output ./publish
 
-      - name: Симуляція деплою
+      - name: Deploy Simulation
         run: echo "Деплой виконано успішно (імітація)"
