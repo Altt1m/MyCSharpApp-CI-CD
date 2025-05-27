@@ -11,50 +11,54 @@ jobs:
     steps:
       - name: Cloning Repository
         uses: actions/checkout@v3
-
       - name: .NET Installation
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
-
-      - name: Dependency Installation
+      - name: Dependencies Installation
         run: dotnet restore
-
       - name: Project Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release
+      - name: Artefacts Saving
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: |
+            **/bin/Release/net8.0/
+            **/obj/**
 
   test:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Cloning repository
+      - name: Cloning Repository
         uses: actions/checkout@v3
-
       - name: .NET Installation
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
-
-      - name: Dependency Installation
+      - name: Artefacts Loading
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifacts
+      - name: Dependencies Installation
         run: dotnet restore
-
-      - name: Test Execution
-        run: dotnet test --verbosity normal
+      - name: Tests Executions
+        run: dotnet test --verbosity detailed
 
   deploy:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Cloning repository
+      - name: Cloning Repository
         uses: actions/checkout@v3
-
       - name: .NET Installation
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
-
+      - name: Dependencies Installation
+        run: dotnet restore
       - name: Project Publishing
-        run: dotnet publish --configuration Release --no-restore --output ./publish
-
+        run: dotnet publish MyCSharpApp/MyCSharpApp.csproj --configuration Release --output ./publish
       - name: Deploy Simulation
-        run: echo "Деплой виконано успішно (імітація)"
+        run: echo "Deploy successfully done (simulated)"
