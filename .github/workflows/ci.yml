@@ -1,0 +1,60 @@
+name: CI/CD for C# App with Build-Test-Deploy Stages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Клонування репозиторію
+        uses: actions/checkout@v3
+
+      - name: Встановлення .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Встановлення залежностей
+        run: dotnet restore
+
+      - name: Збірка проекту
+        run: dotnet build --configuration Release --no-restore
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Клонування репозиторію
+        uses: actions/checkout@v3
+
+      - name: Встановлення .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Встановлення залежностей
+        run: dotnet restore
+
+      - name: Запуск тестів
+        run: dotnet test --no-build --verbosity normal
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Клонування репозиторію
+        uses: actions/checkout@v3
+
+      - name: Встановлення .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Публікація проекту
+        run: dotnet publish --configuration Release --no-restore --output ./publish
+
+      - name: Симуляція деплою
+        run: echo "Деплой виконано успішно (імітація)"
